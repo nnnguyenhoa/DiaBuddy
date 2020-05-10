@@ -5,6 +5,8 @@ import Login from './screens/Login';
 import Signup from './screens/Signup';
 import Profile from './screens/MyProfileScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
+import Splash from './screens/Splash';
+import UserInfo from './screens/UserInfo';
 import EducationalContent from './screens/EducationalContent';
 //import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -54,9 +56,15 @@ const SwitchNavigator = createSwitchNavigator(
     Tabs: {
       screen: TabNavigator,
     },
+    Splash: {
+      screen: Splash,
+    },
+    UserInfo: {
+      screen: UserInfo,
+    },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'Splash',
   },
 );
 

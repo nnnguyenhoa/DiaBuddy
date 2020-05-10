@@ -2,12 +2,15 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Image, TouchableOpacity, ScrollView } from 'react-native';
 import Firebase from '../config/Firebase';
+import { DataTable } from 'react-native-paper';
 // Gotten from bootdey.com/react-native-snippet/23/Profile-ui-example
 
 class UserInfo extends Component {
 	state = {
 		currUser: Firebase.auth().currentUser.uid
 	}
+
+
   render() {
 
   	Firebase.database().ref('/users/' + this.state.currUser + '/Profile/').once('value', snapshot => {
@@ -18,6 +21,8 @@ class UserInfo extends Component {
             var city = snapshot.child('City').val();
             var state = snapshot.child('State').val();
             var type = snapshot.child('Type_ofDiabetes').val();
+            
+
         	this.setState({
               FirstName: firstname,
               LastName: lastname,
@@ -49,7 +54,7 @@ class UserInfo extends Component {
 
                     <Text style={styles.large}>Health</Text>
                     <Text>Type of Diabetes: Type {this.state.Type_ofDiabetes}</Text>
-                    <Text>Medicine Type</Text>
+                    <Text>Medicine being taken</Text>
 
                     <Text style={styles.large}>Data on Account</Text>
                     <Text>GLV readings</Text>

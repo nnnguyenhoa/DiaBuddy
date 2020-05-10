@@ -7,7 +7,7 @@ import {Dialogflow_V2} from 'react-native-dialogflow';
 import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import {dialogflowConfig} from '../config';
 import Firebase from '../config/Firebase';
-//import Tts from 'react-native-tts';
+import Tts from 'react-native-tts';
 
 const BOT_USER = {
   _id: 2,
@@ -494,9 +494,9 @@ class ChatbotScreen extends React.Component {
   constructor(props) {
     super(props);
     Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
-    // Tts.addEventListener('tts-start', event => console.log('start', event));
-    // Tts.addEventListener('tts-finish', event => console.log('finish', event));
-    // Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
+    Tts.addEventListener('tts-start', event => console.log('start', event));
+    Tts.addEventListener('tts-finish', event => console.log('finish', event));
+    Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
 
   onSpeechResultsfn(e) {
@@ -825,7 +825,7 @@ class ChatbotScreen extends React.Component {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
-    //Tts.speak(msg.text);
+    Tts.speak(msg.text);
   }
 
   _startRecognition = async () => {

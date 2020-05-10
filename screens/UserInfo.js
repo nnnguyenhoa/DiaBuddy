@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Image, TouchableOpacity, ScrollView } from 'react-native';
 import Firebase from '../config/Firebase';
-import { DataTable } from 'react-native-paper';
 // Gotten from bootdey.com/react-native-snippet/23/Profile-ui-example
 
 class UserInfo extends Component {

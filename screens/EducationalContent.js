@@ -1,15 +1,33 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
+import {CardList} from 'react-native-card-list';
 
+const cards = [
+  {
+    id: '0',
+    title: 'Dummy Title 1',
+    picture: require('../assets/background.jpg'),
+    content: <Text>Starry Night</Text>,
+  },
+  {
+    id: '1',
+    title: 'Dummy Title 2',
+    picture: require('../assets/background.jpg'),
+    content: <Text>Wheat Field with Cypresses</Text>,
+  },
+  {
+    id: '2',
+    title: 'Dummy Title 3',
+    picture: require('../assets/background.jpg'),
+    content: <Text>Bedroom in Arles</Text>,
+  },
+];
 
-
-class EducationalContent extends Component {
+export default class App extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>
-          This is where the log readings and display readings / ask for readings functionality will be implemented.
-        </Text>
+        <CardList cards={cards} />
       </View>
     );
   }
@@ -17,15 +35,9 @@ class EducationalContent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    textAlign: 'center',
-    marginTop: 45,
-  },
-  header: {
-    fontSize: 15,
-    textAlign: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
 });
-
-export default EducationalContent;

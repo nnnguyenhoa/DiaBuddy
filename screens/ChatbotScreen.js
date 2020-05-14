@@ -437,6 +437,10 @@ class ChatbotScreen extends React.Component {
     BgLow: '',
     BgHighdate: '',
     BgLowdate: '',
+    FirstAid: 0,
+    GenDiabetes: 0,
+    LifeTips: 0,
+    SgrLvl: 0,
     currUser: Firebase.auth().currentUser.uid,
     messages: [
       {
@@ -487,6 +491,20 @@ class ChatbotScreen extends React.Component {
           BgHighdate: highdate,
           BgLow: low,
           BgLowdate: lowdate,
+        });
+      });
+      Firebase.database()
+      .ref('/users/' + this.state.currUser + '/Tags/Counts')
+      .once('value', snapshot => {
+        var FA = snapshot.child('FirstAid').val();
+        var GD = snapshot.child('GenDiabetes').val();
+        var LT = snapshot.child('LifeTips').val();
+        var SL = snapshot.child('SgrLvl').val();
+        this.setState({
+          FirstAid: FA,
+          GenDiabetes: GD,
+          LifeTips: LT,
+          SgrLvl: SL,
         });
       });
   }
@@ -674,7 +692,52 @@ class ChatbotScreen extends React.Component {
     return 'success';
   }
 
-  handleResponse(result) {    
+  UpdateAid() {
+    var Updatevalue = this.state.FirstAid + 1;
+    Firebase.database()
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          FirstAid: Updatevalue,
+        });
+    this.setState({
+        FirstAid: Updatevalue,
+      });
+  }
+  UpdateGen() {
+    var Updatevalue = this.state.GenDiabetes + 1;
+    Firebase.database()
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          GenDiabetes: Updatevalue,
+        });
+    this.setState({
+        GenDiabetes: Updatevalue,
+      });
+  }
+  UpdateTips() {
+    var Updatevalue = this.state.LifeTips + 1;
+    Firebase.database()
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          LifeTips: Updatevalue,
+        });
+    this.setState({
+        LifeTips: Updatevalue,
+      });
+  }
+  UpdateSgr() {
+    var Updatevalue = this.state.SgrLvl + 1;
+    Firebase.database()
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          SgrLvl: Updatevalue,
+        });
+    this.setState({
+        SgrLvl: Updatevalue,
+      });
+  }
+
+  handleResponse(result) {
     console.log(result);
     console.log('Response reached');
     let text = result.queryResult.fulfillmentText;
@@ -699,26 +762,31 @@ class ChatbotScreen extends React.Component {
       this.showResponse(text, payload);
       // Diabetes Type 1 & Type 2 Differences
     } else if (displayName === 'Diabetes Type 1 & Type 2 Difference') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(Type1Type2DiabetesMessage);
       // Foods GI
     } else if (displayName === 'Foods GI') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(FoodsGI);
       // Glucose level - image render
     } else if (displayName === 'Glucose Level - Norm/Pre/T1D/T2D') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(GlucoseLevelsChartMessage);
       // How common is diabetes?
     } else if (displayName === 'How common is diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(ReadMoreStatisticsMessage);
       // Food & Blood Sugar
     } else if (displayName === 'How Does Eating Affect Your Blood Sugar?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(EatingBloodSugarMessage);
@@ -729,31 +797,37 @@ class ChatbotScreen extends React.Component {
       this.showResponseBubble(TopQuestionMessage);
       // How to lower blood sugar instantly?
     } else if (displayName === 'How to lower blood sugar instantly?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(LowerBloodSugarAdjustmentMessage);
       // Is diabetes curable?
     } else if (displayName === 'Is diabetes curable?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(LowerBloodSugarAdjustmentMessage);
       // Prevention general
     } else if (displayName === 'Prevention') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PreventionGeneralMessage);
       // Prevention - Lifestyle to reduce risk
     } else if (displayName === 'Prevention - Lifestyle general') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PreventionLifestyleMessage);
       // Symptoms to diagnose diabetes
     } else if (displayName === 'Symptoms to diagnose') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(DiagnosticsMessage);
       // Symptoms of prediabetes
     } else if (displayName === 'Pre-diabetes symptoms') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PrediabetesSymptomsMessage);
@@ -762,36 +836,43 @@ class ChatbotScreen extends React.Component {
       displayName ===
       'What does it feel like when your blood sugar is too high?'
     ) {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(TooHighBloodSugarMessage);
       // What is diabetes?
     } else if (displayName === 'What is diabetes?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsDiabetesMessage);
       // What is pre-diabetes?
     } else if (displayName === 'What is pre-diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsPreDiabetesMessage);
       // What is type 1 diabetes?
     } else if (displayName === 'What is Type 1 diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsType1DiabetesMessage);
       // What is type 2 diabetes?
     } else if (displayName === 'What is Type 2 diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsType2DiabetesMessage);
       // What is type 1 diabetes - Maintenance
     } else if (displayName === 'What is Type 1 diabetes? - Maintenance') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(MaintenanceOfType1Message);
       // What is type 2 diabetes - Maintenance
     } else if (displayName === 'What is Type 2 diabetes? - Maintenance') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(MaintenanceOfType2Message);
@@ -801,6 +882,7 @@ class ChatbotScreen extends React.Component {
       this.showResponse(text, payload);
     }
   }
+
 
   showResponseBubble(message) {
     message._id = this.state.messages.length + 1;

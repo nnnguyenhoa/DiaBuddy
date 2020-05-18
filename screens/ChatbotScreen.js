@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, Switch} from 'react-native';
 
 import {StyleSheet, Button} from 'react-native';
 import Voice from 'react-native-voice';
@@ -476,6 +476,8 @@ class ChatbotScreen extends React.Component {
       },
     ],
     results: [],
+    ttsToggle: true,
+    sttToggle: true,
   };
 
   UNSAFE_componentWillMount() {
@@ -513,7 +515,7 @@ class ChatbotScreen extends React.Component {
     super(props);
     Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
     Tts.addEventListener('tts-start', event => console.log('start', event));
-    Tts.addEventListener('tts-finish', event => console.log('finish', event));
+    Tts.addEventListener('tts-finish', event => this._startRecognition());
     Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
 
@@ -527,10 +529,6 @@ class ChatbotScreen extends React.Component {
     }
   }
 
-  componentWillmount() {
-    Voice.destroy().then(Voice.removeAllListeners);
-  }
-
   async componentDidMount() {
     Dialogflow_V2.setConfiguration(
       dialogflowConfig.client_email,
@@ -538,6 +536,7 @@ class ChatbotScreen extends React.Component {
       Dialogflow_V2.LANG_ENGLISH_US,
       dialogflowConfig.project_id,
     );
+   Tts.speak("Hi! I am GlookoBuddy. I am here to answer your questions about diabetes. If you want to ask something, type in or say the question");
   }
 
   onSend(messages = []) {
@@ -907,19 +906,24 @@ class ChatbotScreen extends React.Component {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
-    Tts.speak(msg.text);
+    if(this.state.ttsToggle === true) {
+    	Tts.speak(msg.text);
+    } else {
+    	this._startRecognition();
+    }
   }
 
   _startRecognition = async () => {
-    this.setState({
-      results: [],
-    });
-    try {
-      await Voice.start('en-US');
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  	if(this.state.sttToggle === true) {
+    	this.setState({
+      		results: [],
+    	});
+    	try {
+      		await Voice.start('en-US');
+    	} catch (e) {
+      		console.error(e);
+    	}
+  	};
 
   _stopRecognition = async () => {
     try {
@@ -927,6 +931,7 @@ class ChatbotScreen extends React.Component {
     } catch (e) {
       console.log(e);
     }
+	}
   };
 
   _addVoiceMsg = reses => {
@@ -975,6 +980,7 @@ class ChatbotScreen extends React.Component {
   };
   render() {
     return (
+    <>
       <View style={styles.container}>
         <GiftedChat
           messages={this.state.messages}
@@ -984,7 +990,26 @@ class ChatbotScreen extends React.Component {
           renderBubble={this.renderBubble}
         />
         <Button onPress={this._startRecognition} title="Begin Dictation 🎤" />
-      </View>
+    </View>
+    <View style={styles.rowContainer}>
+    	<Text>Text To Speech </Text>
+    	<Switch
+	    	trackColor={{false:'gray',true:'teal'}}
+	    	thumbColor="white"
+	    	ios_backgroundColor="gray"
+	    	onValueChange={(value) => this.setState({ttsToggle: value})}
+	    	value={this.state.ttsToggle}
+	    />
+    	<Text>Speech To Text </Text>
+    	<Switch
+	    	trackColor={{false:'gray',true:'teal'}}
+	    	thumbColor="white"
+	    	ios_backgroundColor="gray"
+	    	onValueChange={(value) => this.setState({sttToggle: value})}
+	    	value={this.state.sttToggle}
+	    />
+    </View>
+    </>
     );
   }
 }
@@ -992,6 +1017,11 @@ class ChatbotScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 export default ChatbotScreen;

@@ -536,7 +536,7 @@ class ChatbotScreen extends React.Component {
       Dialogflow_V2.LANG_ENGLISH_US,
       dialogflowConfig.project_id,
     );
-   Tts.speak("Hi! I am GlookoBuddy. I am here to answer your questions about diabetes. If you want to ask something, type in or say the question");
+   //Tts.speak("Hi! I am GlookoBuddy. I am here to answer your questions about diabetes. If you want to ask something, type in or say the question");
   }
 
   onSend(messages = []) {

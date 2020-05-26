@@ -7,7 +7,7 @@ import Profile from './screens/MyProfileScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
 import Splash from './screens/Splash';
 import UserInfo from './screens/UserInfo';
-import ArticlesContent from './screens/ArticlesContent';
+import EducationalContent from './screens/EducationalContent';
 //import Icon from 'react-native-vector-icons/FontAwesome';
 
 const TabNavigator = createBottomTabNavigator(
@@ -31,7 +31,7 @@ const TabNavigator = createBottomTabNavigator(
       },
     },
     EducationalContent: {
-      screen: ArticlesContent,
+      screen: EducationalContent,
       navigationOptions: {
         tabBarLabel: 'EDU',
         // tabBarIcon: ({tintColor}) => (

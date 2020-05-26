@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, Switch} from 'react-native';
 
 import {StyleSheet, Button} from 'react-native';
 import Voice from 'react-native-voice';
@@ -429,7 +429,6 @@ var WhatIsType2DiabetesMessage = {
 
 var MaintenanceOfType2Message = MaintenanceOfType1Message;
 
-var MaintenanceDiet = null;
 class ChatbotScreen extends React.Component {
   state = {
     BpHigh: '',
@@ -438,11 +437,10 @@ class ChatbotScreen extends React.Component {
     BgLow: '',
     BgHighdate: '',
     BgLowdate: '',
+    FirstAid: 0,
     GenDiabetes: 0,
     LifeTips: 0,
     SgrLvl: 0,
-    FirstAid: 0,
-    countData: [],
     currUser: Firebase.auth().currentUser.uid,
     messages: [
       {
@@ -462,13 +460,13 @@ class ChatbotScreen extends React.Component {
           keepIt: true,
           values: [
             {
-              _id: Math.random() + 1,
+              _id: Math.random(),
               user: USER,
               title: 'What can I ask you?',
               text: 'What can I ask you?',
             },
             {
-              _id: Math.random() + 2,
+              _id: Math.random(),
               user: USER,
               title: 'I want to log my data.',
               text: 'I want to log my data.',
@@ -478,6 +476,8 @@ class ChatbotScreen extends React.Component {
       },
     ],
     results: [],
+    ttsToggle: true,
+    sttToggle: true,
   };
 
   UNSAFE_componentWillMount() {
@@ -495,28 +495,38 @@ class ChatbotScreen extends React.Component {
           BgLowdate: lowdate,
         });
       });
+      Firebase.database()
+      .ref('/users/' + this.state.currUser + '/Tags/Counts')
+      .once('value', snapshot => {
+        var FA = snapshot.child('FirstAid').val();
+        var GD = snapshot.child('GenDiabetes').val();
+        var LT = snapshot.child('LifeTips').val();
+        var SL = snapshot.child('SgrLvl').val();
+        this.setState({
+          FirstAid: FA,
+          GenDiabetes: GD,
+          LifeTips: LT,
+          SgrLvl: SL,
+        });
+      });
   }
 
   constructor(props) {
     super(props);
     Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
     Tts.addEventListener('tts-start', event => console.log('start', event));
-    Tts.addEventListener('tts-finish', event => console.log('finish', event));
+    Tts.addEventListener('tts-finish', event => this._startRecognition());
     Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
 
   onSpeechResultsfn(e) {
-    if (this.state.results.length === 0) {
+    if (this.state.results.length == 0) {
       console.log('onSpeechResults: ', e);
       this.setState({
         results: e.value,
       });
       this._addVoiceMsg(this.state.results);
     }
-  }
-
-  componentWillmount() {
-    Voice.destroy().then(Voice.removeAllListeners);
   }
 
   async componentDidMount() {
@@ -526,21 +536,7 @@ class ChatbotScreen extends React.Component {
       Dialogflow_V2.LANG_ENGLISH_US,
       dialogflowConfig.project_id,
     );
-  }
-
-  getRandom(arr, n) {
-    var result = new Array(n),
-      len = arr.length,
-      taken = new Array(len);
-    if (n > len) {
-      throw new RangeError('getRandom: more elements taken than available');
-    }
-    while (n--) {
-      var x = Math.floor(Math.random() * len);
-      result[n] = arr[x in taken ? taken[x] : x];
-      taken[x] = --len in taken ? taken[len] : len;
-    }
-    return result;
+   //Tts.speak("Hi! I am GlookoBuddy. I am here to answer your questions about diabetes. If you want to ask something, type in or say the question");
   }
 
   onSend(messages = []) {
@@ -578,16 +574,16 @@ class ChatbotScreen extends React.Component {
   //returns either a response or Null
   handleRead(res) {
     this.updateMyState();
-    if (res[1] === 'blood') {
-      if (res[2] === 'glucose') {
-        if (res[3] === 'highest') {
+    if (res[1] == 'blood') {
+      if (res[2] == 'glucose') {
+        if (res[3] == 'highest') {
           return (
             'Your highest Blood Glucose was ' +
             this.state.BgHigh +
             ' on ' +
             this.state.BgHighdate
           );
-        } else if (res[3] === 'lowest') {
+        } else if (res[3] == 'lowest') {
           return (
             'Your lowest Blood Glucose was ' +
             this.state.BgLow +
@@ -605,15 +601,15 @@ class ChatbotScreen extends React.Component {
   //returns either success or Null
   handleWrite(res) {
     console.log(res[1] + res[2] + ' ' + res[3]);
-    if (res[1] === 'blood') {
-      if (res[2] === 'glucose') {
+    if (res[1] == 'blood') {
+      if (res[2] == 'glucose') {
         var amount = res[3];
         //check if input is correct and if it is input it into the database
         result = this.inputCheck(parseInt(amount));
-        if (result === '') {
-          result = this.handleWriteBG(amount);
-        } else {
-          return result;
+        if(result == ''){
+            result = this.handleWriteBG(amount);
+        }else{
+            return result;
         }
         return result;
       }
@@ -623,29 +619,29 @@ class ChatbotScreen extends React.Component {
   }
 
   //if input is good then function returns '' else it returns error message
-  inputCheck(amount) {
-    if (isNaN(amount)) {
-      return 'Please input a number';
-    } else {
-      if (amount < 20 || amount > 399) {
-        return 'This input is an incredibly dangerous level, are you sure this reading is correct?';
-      } else {
-        return '';
-      }
+  inputCheck(amount){
+    if(isNaN(amount)){
+        return "Please input a number";
+    }else{
+        if(amount < 20 || amount > 399){
+            return "This input is an incredibly dangerous level, are you sure this reading is correct?";
+        }else{
+            return '';
+        }
     }
     return '';
   }
 
   handleWriteBG(BGamount) {
     currDate = new Date();
-    var pushlog = Firebase.database()
-      .ref('/users/' + this.state.currUser + '/Analytics/BloodGlucoseLog/')
-      .push();
+    var pushlog = Firebase.database().ref(
+      '/users/' + this.state.currUser + '/Analytics/BloodGlucoseLog/',
+    ).push();
     pushlog.update({
       value: BGamount,
       date: currDate,
     });
-    if (this.state.BgHigh === 'Null') {
+    if (this.state.BgHigh == 'Null') {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({
@@ -657,7 +653,7 @@ class ChatbotScreen extends React.Component {
         BgHighdate: currDate,
       });
     }
-    if (this.state.BgLow === 'Null') {
+    if (this.state.BgLow == 'Null') {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({
@@ -698,259 +694,187 @@ class ChatbotScreen extends React.Component {
   UpdateAid() {
     var Updatevalue = this.state.FirstAid + 1;
     Firebase.database()
-      .ref('/users/' + this.state.currUser + '/Tags/Counts')
-      .update({
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          FirstAid: Updatevalue,
+        });
+    this.setState({
         FirstAid: Updatevalue,
       });
-    this.setState({
-      FirstAid: Updatevalue,
-    });
   }
-
   UpdateGen() {
     var Updatevalue = this.state.GenDiabetes + 1;
     Firebase.database()
-      .ref('/users/' + this.state.currUser + '/Tags/Counts')
-      .update({
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          GenDiabetes: Updatevalue,
+        });
+    this.setState({
         GenDiabetes: Updatevalue,
       });
-    this.setState({
-      GenDiabetes: Updatevalue,
-    });
   }
-
   UpdateTips() {
     var Updatevalue = this.state.LifeTips + 1;
     Firebase.database()
-      .ref('/users/' + this.state.currUser + '/Tags/Counts')
-      .update({
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          LifeTips: Updatevalue,
+        });
+    this.setState({
         LifeTips: Updatevalue,
       });
-    this.setState({
-      LifeTips: Updatevalue,
-    });
   }
-
   UpdateSgr() {
     var Updatevalue = this.state.SgrLvl + 1;
     Firebase.database()
-      .ref('/users/' + this.state.currUser + '/Tags/Counts')
-      .update({
+        .ref('/users/' + this.state.currUser + '/Tags/Counts')
+        .update({
+          SgrLvl: Updatevalue,
+        });
+    this.setState({
         SgrLvl: Updatevalue,
       });
-    this.setState({
-      SgrLvl: Updatevalue,
-    });
-  }
-
-  async fetchCountsAndUpdate() {
-    let counts = [];
-
-    const count = Firebase.database().ref(
-      '/users/' + this.state.currUser + '/Tags/Counts',
-    );
-    const asked = Firebase.database().ref(
-      '/users/' + this.state.currUser + '/Tags/MostAsked',
-    );
-
-    await count.once('value', snapshot => {
-      counts.push(
-        ['FA', snapshot.val().FirstAid],
-        ['GD', snapshot.val().GenDiabetes],
-        ['LT', snapshot.val().LifeTips],
-        ['SL', snapshot.val().SgrLvl],
-      );
-      counts.sort(function(a, b) {
-        return b[1] - a[1];
-      });
-    });
-    // Most asked; second most asked; third most asked (fourth tag type ommitted completely)
-    let first = counts[0][0];
-    let second = counts[1][0];
-    let third = counts[2][0];
-
-    asked.update({
-      First: first,
-      Second: second,
-      Third: third,
-    });
-
-    this.setState({countData: counts});
   }
 
   handleResponse(result) {
-    let tag;
-    this.fetchCountsAndUpdate();
+    console.log(result);
+    console.log('Response reached');
     let text = result.queryResult.fulfillmentText;
+    console.log(text);
     let displayName = result.queryResult.intent.displayName;
-    if (displayName !== undefined) {
-      tag = displayName.split(' ')[0];
-    }
-
     var res = text.split(' ');
-    // Update tag count
-    if (tag === 'GD') {
-      this.UpdateGen();
-    } else if (tag === 'LT') {
-      this.UpdateTips();
-    } else if (tag === 'FA') {
-      this.UpdateAid();
-    } else if (tag === 'SL') {
-      this.UpdateSgr();
-    } else if (tag === 'FAGD') {
-      this.UpdateAid();
-      this.UpdateGen();
-    } else if (tag === 'SLFA') {
-      this.UpdateSgr();
-      this.UpdateAid();
-    } else if (tag === 'LTSL') {
-      this.UpdateTips();
-      this.UpdateSgr();
-    } else if (tag === 'GDLT') {
-      this.UpdateGen();
-      this.UpdateTips();
-    }
-
-    if (res[0] === 'Read') {
+    if (res[0] == 'Read') {
       text = 'Could not retreive your data sorry';
       var response = this.handleRead(res);
-      if (response !== 'Null') {
+      if (response != 'Null') {
         text = response;
       }
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
-    } else if (res[0] === 'write') {
+    } else if (res[0] == 'write') {
       text = 'Storing your data';
       var response = this.handleWrite(res);
-      if (response !== 'success') {
+      if (response != 'success') {
         text = response;
       }
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       // Diabetes Type 1 & Type 2 Differences
-    } else if (displayName === 'GD - Diabetes Type 1 & Type 2 Difference') {
+    } else if (displayName === 'Diabetes Type 1 & Type 2 Difference') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(Type1Type2DiabetesMessage);
       // Foods GI
-    } else if (displayName === 'LT - Foods GI') {
+    } else if (displayName === 'Foods GI') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(FoodsGI);
       // Glucose level - image render
-    } else if (displayName === 'SL - Glucose Level - Norm/Pre/T1D/T2D') {
+    } else if (displayName === 'Glucose Level - Norm/Pre/T1D/T2D') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(GlucoseLevelsChartMessage);
       // How common is diabetes?
-    } else if (displayName === 'GD - How common is diabetes?') {
+    } else if (displayName === 'How common is diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(ReadMoreStatisticsMessage);
       // Food & Blood Sugar
-    } else if (
-      displayName === 'LTSL - How does eating affect your blood sugar?'
-    ) {
+    } else if (displayName === 'How Does Eating Affect Your Blood Sugar?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(EatingBloodSugarMessage);
       // What to ask?
-    } else if (displayName === 'GD - What to ask') {
+    } else if (displayName === 'What to ask') {
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(TopQuestionMessage);
       // How to lower blood sugar instantly?
-    } else if (displayName === 'SL - How to lower blood sugar instantly?') {
+    } else if (displayName === 'How to lower blood sugar instantly?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(LowerBloodSugarAdjustmentMessage);
       // Is diabetes curable?
-    } else if (displayName === 'GD - Is diabetes curable?') {
+    } else if (displayName === 'Is diabetes curable?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(LowerBloodSugarAdjustmentMessage);
       // Prevention general
-    } else if (displayName === 'LT - Prevention') {
+    } else if (displayName === 'Prevention') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PreventionGeneralMessage);
       // Prevention - Lifestyle to reduce risk
-    } else if (displayName === 'LT - Prevention - Lifestyle general') {
+    } else if (displayName === 'Prevention - Lifestyle general') {
+      this.UpdateTips();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PreventionLifestyleMessage);
       // Symptoms to diagnose diabetes
-    } else if (displayName === 'GD - Symptoms to diagnose') {
+    } else if (displayName === 'Symptoms to diagnose') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(DiagnosticsMessage);
       // Symptoms of prediabetes
-    } else if (displayName === 'GD - Pre-diabetes symptoms') {
+    } else if (displayName === 'Pre-diabetes symptoms') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(PrediabetesSymptomsMessage);
       // What does it feel like when your blood sugar is too high?
     } else if (
       displayName ===
-      'SLFA - What does it feel like when your blood sugar is too high?'
+      'What does it feel like when your blood sugar is too high?'
     ) {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(TooHighBloodSugarMessage);
       // What is diabetes?
-    } else if (displayName === 'GD - What is diabetes?') {
+    } else if (displayName === 'What is diabetes?') {
+      this.UpdateSgr();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsDiabetesMessage);
       // What is pre-diabetes?
-    } else if (displayName === 'GD - What is pre-diabetes?') {
+    } else if (displayName === 'What is pre-diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsPreDiabetesMessage);
       // What is type 1 diabetes?
-    } else if (displayName === 'GD - What is Type 1 diabetes?') {
+    } else if (displayName === 'What is Type 1 diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsType1DiabetesMessage);
       // What is type 2 diabetes?
-    } else if (displayName === 'GD - What is Type 2 diabetes?') {
+    } else if (displayName === 'What is Type 2 diabetes?') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(WhatIsType2DiabetesMessage);
       // What is type 1 diabetes - Maintenance
-    } else if (
-      displayName === 'GDLT - What is Type 1 diabetes? - Maintenance'
-    ) {
+    } else if (displayName === 'What is Type 1 diabetes? - Maintenance') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(MaintenanceOfType1Message);
       // What is type 2 diabetes - Maintenance
-    } else if (
-      displayName === 'GDLT - What is Type 2 diabetes? - Maintenance'
-    ) {
+    } else if (displayName === 'What is Type 2 diabetes? - Maintenance') {
+      this.UpdateGen();
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
       this.showResponseBubble(MaintenanceOfType2Message);
-      // Maintenance of diabetes - diet
-    } else if (displayName === 'LT - Maintenance of diabetes - Diet') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
-      this.showResponseBubble(MaintenanceDiet);
-    } else if (displayName === 'GD - Recommend') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
-    } else if (displayName === 'LT - Recommend') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
-    } else if (displayName === 'FA - Recommend') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
-    } else if (displayName === 'SL - Recommend') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
-    } else if (displayName === 'Recommend') {
-      let payload = result.queryResult.webhookPayload;
-      this.showResponse(text, payload);
       // Questions that do not have any suggestion bubbles
     } else {
       let payload = result.queryResult.webhookPayload;
@@ -958,8 +882,9 @@ class ChatbotScreen extends React.Component {
     }
   }
 
+
   showResponseBubble(message) {
-    message._id = this.state.messages.length + 2;
+    message._id = this.state.messages.length + 1;
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [message]),
     }));
@@ -981,19 +906,24 @@ class ChatbotScreen extends React.Component {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
-    Tts.speak(msg.text);
+    if(this.state.ttsToggle === true) {
+    	Tts.speak(msg.text);
+    } else {
+    	this._startRecognition();
+    }
   }
 
   _startRecognition = async () => {
-    this.setState({
-      results: [],
-    });
-    try {
-      await Voice.start('en-US');
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  	if(this.state.sttToggle === true) {
+    	this.setState({
+      		results: [],
+    	});
+    	try {
+      		await Voice.start('en-US');
+    	} catch (e) {
+      		console.error(e);
+    	}
+  	};
 
   _stopRecognition = async () => {
     try {
@@ -1001,6 +931,7 @@ class ChatbotScreen extends React.Component {
     } catch (e) {
       console.log(e);
     }
+	}
   };
 
   _addVoiceMsg = reses => {
@@ -1049,6 +980,7 @@ class ChatbotScreen extends React.Component {
   };
   render() {
     return (
+    <>
       <View style={styles.container}>
         <GiftedChat
           messages={this.state.messages}
@@ -1058,7 +990,26 @@ class ChatbotScreen extends React.Component {
           renderBubble={this.renderBubble}
         />
         <Button onPress={this._startRecognition} title="Begin Dictation 🎤" />
-      </View>
+    </View>
+    <View style={styles.rowContainer}>
+    	<Text>Text To Speech </Text>
+    	<Switch
+	    	trackColor={{false:'gray',true:'teal'}}
+	    	thumbColor="white"
+	    	ios_backgroundColor="gray"
+	    	onValueChange={(value) => this.setState({ttsToggle: value})}
+	    	value={this.state.ttsToggle}
+	    />
+    	<Text>Speech To Text </Text>
+    	<Switch
+	    	trackColor={{false:'gray',true:'teal'}}
+	    	thumbColor="white"
+	    	ios_backgroundColor="gray"
+	    	onValueChange={(value) => this.setState({sttToggle: value})}
+	    	value={this.state.sttToggle}
+	    />
+    </View>
+    </>
     );
   }
 }
@@ -1066,6 +1017,11 @@ class ChatbotScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 export default ChatbotScreen;

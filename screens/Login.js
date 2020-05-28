@@ -60,6 +60,11 @@ class Login extends React.Component {
             title="Don't have an account yet? Sign up"
             onPress={() => this.props.navigation.navigate('Signup')}
           />
+          <Button style={styles.text}
+            title="Developer Mode"
+            color="red"
+            onPress={() => this.props.navigation.navigate('Splash')}
+          />
         </View>
 
         <View style={styles.footer}>

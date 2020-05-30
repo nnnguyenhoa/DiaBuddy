@@ -9,7 +9,10 @@ import {
   TouchableOpacity,
   Text,
   Button,
+  ImageBackground,
 } from 'react-native';
+
+
 
 class Login extends React.Component {
   handleLogin = () => {
@@ -29,7 +32,8 @@ class Login extends React.Component {
   render() {
     return (
 
-      <View style={styles.foundation}>
+      // <View style={styles.foundation}>
+      <ImageBackground source={require('../assets/lightwhite2.png')} style={styles.foundation}>
 
         <View style={styles.header}>
           <Image
@@ -60,14 +64,19 @@ class Login extends React.Component {
             title="Don't have an account yet? Sign up"
             onPress={() => this.props.navigation.navigate('Signup')}
           />
+          <Button style={styles.text}
+            title="Developer Mode"
+            color="red"
+            onPress={() => this.props.navigation.navigate('Splash')}
+          />
         </View>
 
         <View style={styles.footer}>
-
           <Image style={styles.image} source={require('../assets/Text/welcome.png')} />
         </View>
 
-      </View>
+      </ImageBackground>
+      // </View>
     );
   }
 }
@@ -76,7 +85,7 @@ const styles = StyleSheet.create({
   // Styles Container
   loginContainer: {
     flex: 1.5,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -142,6 +151,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1.4,
     resizeMode:'cover',
   },
+
 });
 
 export default Login;

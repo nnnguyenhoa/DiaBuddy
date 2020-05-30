@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   Button,
+  ImageBackground
 } from 'react-native';
 
 class Signup extends React.Component {
@@ -85,7 +86,7 @@ class Signup extends React.Component {
 
   render() {
     return (
-      <View style={styles.foundation}>
+      <ImageBackground source={require('../assets/lightwhite.png')} style={styles.foundation}>
         <View style={styles.header}>
           <Image
             style={styles.image}
@@ -94,64 +95,102 @@ class Signup extends React.Component {
         </View>
 
         <View style={styles.container}>
-          <ScrollView>
+          <ScrollView style = {{margin: 6}}>
 
+          <View style = {styles.textHeader}>
+            <Text style = {styles.textHead}>Please fill out the following.</Text>
+            <Text style = {styles.textSub}>{"\n"}Any fields with a <Text style={{color: 'red'}}>*</Text>red asterisk are mandatory.{"\n"}</Text>
+
+          </View>
+
+          <View style = {styles.personal}>
+            <Text style = {styles.sectionText}>Personal</Text>
+          </View> 
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Full name</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.name}
+            // value={this.state.name}
             onChangeText={name => this.setState({name})}
             placeholder="Full Name"
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Email</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.email}
+            // value={this.state.email}
             onChangeText={email => this.setState({email})}
             placeholder="Email"
             autoCapitalize="none"
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Password</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.password}
+            // value={this.state.password}
             onChangeText={password => this.setState({password})}
             placeholder="Password"
             secureTextEntry={true}
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Age</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.Age}
+            // value={this.state.Age}
             onChangeText={Age => this.setState({Age})}
             placeholder="Age"
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Weight</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.Weight}
+            // value={this.state.Weight}
             onChangeText={Weight => this.setState({Weight})}
             placeholder="Weight"
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Height</Text>
           <TextInput
             style={styles.inputBox}
-            value={this.state.City}
-            onChangeText={City => this.setState({City})}
-            placeholder="City"
-          />
-          <TextInput
-            style={styles.inputBox}
-            value={this.state.State}
-            onChangeText={State => this.setState({State})}
-            placeholder="State"
-          />
-          <TextInput
-            style={styles.inputBox}
-            value={this.state.Type_ofDiabetes}
-            onChangeText={Type_ofDiabetes => this.setState({Type_ofDiabetes})}
-            placeholder="Type of Diabetes"
-          />
-          <TextInput
-            style={styles.inputBox}
-            value={this.state.Height}
+            // value={this.state.Height}
             onChangeText={Height => this.setState({Height})}
             placeholder="Height"
           />
+
+          <Text style = {styles.fieldHead}>{"\n"}State</Text>
+          <TextInput
+            style={styles.inputBox}
+            // value={this.state.State}
+            onChangeText={State => this.setState({State})}
+            placeholder="State"
+          />
+
+          <Text style = {styles.fieldHead}>{"\n"}City</Text>
+          <TextInput
+            style={styles.inputBox}
+            // value={this.state.City}
+            onChangeText={City => this.setState({City})}
+            placeholder="City"
+          />
+
+          <View style = {styles.health}>
+            <Text style = {styles.sectionText}>Health</Text>
+          </View> 
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Type of Diabetes</Text>
+          <TextInput
+            style={styles.inputBox}
+            // value={this.state.Type_ofDiabetes}
+            onChangeText={Type_ofDiabetes => this.setState({Type_ofDiabetes})}
+            placeholder="Type of Diabetes"
+          />
+
+          <Text style = {styles.fieldHead}>{"\n"}<Text style={{color: 'red'}}>*</Text>Medicine being taken</Text>
+
+          <View style = {styles.dataOnAccount}>
+            <Text style = {styles.sectionText}>Data on account</Text>
+          </View> 
+
           </ScrollView>
         </View>
         <View style={styles.footer}>
@@ -163,7 +202,7 @@ class Signup extends React.Component {
             <Text style={styles.buttonText}>Take me back!</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 } //
@@ -180,6 +219,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  textHeader: {
+    flex: .5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 4,
+    fontSize: 30,
+  },
+
+  textHead: {
+    fontSize: 25,
+  },
+
+  fieldHead: {
+    fontSize: 20,
+  },
+
+  textSub: {
+    fontSize: 15,
+  },
+
   footer: {
     flex: 1,
     alignItems: 'center',
@@ -188,11 +247,12 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 3,
-    backgroundColor: '#fff',
     alignItems: 'stretch',
     justifyContent: 'center',
     marginLeft: '10%',
     marginRight: '10%',
+    backgroundColor: '#fff',
+
   },
   inputBox: {
     width: '100%',
@@ -200,9 +260,31 @@ const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
     borderColor: '#d3d3d3',
+    backgroundColor: 'lightgrey',
     borderBottomWidth: 1,
     textAlign: 'center',
   },
+
+  personal: {
+    flex: 1,
+    backgroundColor: '#42A0F8',
+  },
+
+  health: {
+    flex: 1,
+    backgroundColor: '#27AE60',
+  },
+
+  dataOnAccount: {
+    flex: 1,
+    backgroundColor: '#F2994A',
+  },
+
+  sectionText: {
+    margin: 10,
+    fontSize: 25,
+  },
+
   buttonSpace: {
     marginTop: 30,
     marginBottom: 10,

@@ -444,16 +444,16 @@ class ChatbotScreen extends React.Component {
     countData: [],
     currUser: Firebase.auth().currentUser.uid,
     messages: [
-      {
-        _id: 1,
-        text: 'If you want to ask something else, type in or say the question.',
-        createdAt: new Date(),
-        user: BOT_USER,
-      },
+      // {
+      //   _id: 1,
+      //   text: 'If you want to ask something else, type in or say the question.',
+      //   createdAt: new Date(),
+      //   user: BOT_USER,
+      // },
       {
         _id: 2,
         text:
-          'Hi! I am GlookoBuddy 🤖 \nI am here to answer your questions about diabetes.',
+          'Hi! I am GlookoBuddy 🤖 \nI am here to answer your questions about diabetes.\n\nFeel free to ask me something, or select one of the following options to see what I can do.',
         createdAt: new Date(),
         user: BOT_USER,
         quickReplies: {

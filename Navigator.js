@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Image} from 'react';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import Login from './screens/Login';
@@ -8,7 +8,7 @@ import ChatbotScreen from './screens/ChatbotScreen';
 import Splash from './screens/Splash';
 import UserInfo from './screens/UserInfo';
 import ArticlesContent from './screens/ArticlesContent';
-//import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -16,9 +16,12 @@ const TabNavigator = createBottomTabNavigator(
       screen: ChatbotScreen,
       navigationOptions: {
         tabBarLabel: 'Chatbot',
-        // tabBarIcon: ({tintColor}) => (
-        //   <Icon name="comment" size={25} color={'#3caffa'} />
-        // ),
+        tabBarIcon: ({tintColor}) => {
+          <Image
+            source={require('./assets/profile.png')}
+            // style={[styles.icon, { tintColor: tintColor }]}
+          />
+        },
       },
     },
     Profile: {

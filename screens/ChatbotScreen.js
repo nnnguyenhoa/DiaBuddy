@@ -1144,6 +1144,7 @@ class ChatbotScreen extends React.Component {
         console.error(e);
       }
     }
+  };
 
   _addVoiceMsg = reses => {
     console.log('addingVoiceMsg');
@@ -1164,7 +1165,7 @@ class ChatbotScreen extends React.Component {
       error => console.log(error),
     );
   };
-
+    
   renderBubble = props => {
     const {currentUser} = this.state;
     return (

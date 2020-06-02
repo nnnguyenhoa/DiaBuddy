@@ -552,8 +552,7 @@ class ChatbotScreen extends React.Component {
       } catch (e) {
         console.log(e);
       }
-    };
-  };
+   };
 
   onSpeechStartfn = e => {
     console.log('onSpeechStart: ', e);

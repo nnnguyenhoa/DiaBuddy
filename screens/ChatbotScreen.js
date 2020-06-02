@@ -546,6 +546,15 @@ class ChatbotScreen extends React.Component {
     Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
 
+  _stopRecognition = async () => {
+      try {
+        await Voice.stop();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  };
+
   onSpeechStartfn = e => {
     console.log('onSpeechStart: ', e);
   };
@@ -1136,15 +1145,6 @@ class ChatbotScreen extends React.Component {
         console.error(e);
       }
     }
-
-    _stopRecognition = async () => {
-      try {
-        await Voice.stop();
-      } catch (e) {
-        console.log(e);
-      }
-    };
-  };
 
   _addVoiceMsg = reses => {
     console.log('addingVoiceMsg');

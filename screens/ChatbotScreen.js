@@ -8,6 +8,7 @@ import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import {dialogflowConfig} from '../config';
 import Firebase from '../config/Firebase';
 import Tts from 'react-native-tts';
+import _ from 'lodash';
 
 const BOT_USER = {
   _id: 2,
@@ -535,7 +536,7 @@ class ChatbotScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
+    Voice.onSpeechResults = _.debounce(this.onSpeechResultsfn.bind(this), 1000);
     Voice.onSpeechStart = this.onSpeechStartfn.bind(this);
     Voice.onSpeechRecognized = this.onSpeechRecognizedfn.bind(this);
     Voice.onSpeechError = this.onSpeechErrorfn.bind(this);
@@ -549,6 +550,7 @@ class ChatbotScreen extends React.Component {
   _stopRecognition = async () => {
       try {
         await Voice.stop();
+        await Voice.cancel();
       } catch (e) {
         console.log(e);
       }

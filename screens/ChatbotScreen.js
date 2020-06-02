@@ -429,6 +429,41 @@ var WhatIsType2DiabetesMessage = {
 
 var MaintenanceOfType2Message = MaintenanceOfType1Message;
 var MaintenanceDiet = null;
+var RecommendCategoriesMessage = {
+  _id: Math.random(),
+  user: BOT_USER,
+  quickReplies: {
+    type: 'radio',
+    keepIt: true,
+    values: [
+      {
+        _id: Math.random(),
+        user: USER,
+        title: 'General Diabetes',
+        text: 'Could you recommend me an article about general diabetes?',
+      },
+      {
+        _id: Math.random(),
+        user: USER,
+        title: 'Lifestyle Tips',
+        text: 'Could you recommend me an article about lifestyle tips?',
+      },
+      {
+        _id: Math.random(),
+        user: USER,
+        title: 'First Aid',
+        text: 'Could you recommend me an article about first aid?',
+      },
+      {
+        _id: Math.random(),
+        user: USER,
+        title: 'Sugar Levels',
+        text: 'Could you recommend me an article about sugar levels?',
+      },
+    ],
+  },
+};
+
 class ChatbotScreen extends React.Component {
   state = {
     BpHigh: '',
@@ -497,15 +532,14 @@ class ChatbotScreen extends React.Component {
         });
       });
   }
-    
-constructor(props) {
+
+  constructor(props) {
     super(props);
     Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
     Tts.addEventListener('tts-start', event => console.log('start', event));
     Tts.addEventListener('tts-finish', event => this._startRecognition());
     Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
-
 
   onSpeechResultsfn(e) {
     if (this.state.results.length === 0) {
@@ -776,6 +810,71 @@ constructor(props) {
     this.setState({countData: counts});
   }
 
+  async fetchGenDiabetesArticle() {
+    let array = [];
+    await Firebase.database()
+      .ref('Articles/GD')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          array.push({
+            Title: child.val().Title,
+            Description: child.val().Description,
+            Link: child.val().Link,
+          });
+        });
+      });
+
+    return this.getRandom(array, 1);
+  }
+
+  async fetchFirstAid() {
+    let array = [];
+    await Firebase.database()
+      .ref('Articles/FA')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          array.push({
+            Title: child.val().Title,
+            Description: child.val().Description,
+            Link: child.val().Link,
+          });
+        });
+      });
+    return this.getRandom(array, 1);
+  }
+
+  async fetchSugarLvl() {
+    let array = [];
+    await Firebase.database()
+      .ref('Articles/SL')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          array.push({
+            Title: child.val().Title,
+            Description: child.val().Description,
+            Link: child.val().Link,
+          });
+        });
+      });
+    return this.getRandom(array, 1);
+  }
+
+  async fetchLifestyle() {
+    let array = [];
+    await Firebase.database()
+      .ref('Articles/LT')
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          array.push({
+            Title: child.val().Title,
+            Description: child.val().Description,
+            Link: child.val().Link,
+          });
+        });
+      });
+    return this.getRandom(array, 1);
+  }
+
   handleResponse(result) {
     let tag;
     this.fetchCountsAndUpdate();
@@ -936,19 +1035,36 @@ constructor(props) {
       this.showResponseBubble(MaintenanceDiet);
     } else if (displayName === 'GD - Recommend') {
       let payload = result.queryResult.webhookPayload;
+      this.fetchGenDiabetesArticle().then(r => {
+        this.showResponse(r[0].Title);
+        this.showResponse(r[0].Link);
+      });
       this.showResponse(text, payload);
     } else if (displayName === 'LT - Recommend') {
       let payload = result.queryResult.webhookPayload;
+      this.fetchLifestyle().then(r => {
+        this.showResponse(r[0].Title);
+        this.showResponse(r[0].Link);
+      });
       this.showResponse(text, payload);
     } else if (displayName === 'FA - Recommend') {
       let payload = result.queryResult.webhookPayload;
+      this.fetchFirstAid().then(r => {
+        this.showResponse(r[0].Title);
+        this.showResponse(r[0].Link);
+      });
       this.showResponse(text, payload);
     } else if (displayName === 'SL - Recommend') {
       let payload = result.queryResult.webhookPayload;
+      this.fetchSugarLvl().then(r => {
+        this.showResponse(r[0].Title);
+        this.showResponse(r[0].Link);
+      });
       this.showResponse(text, payload);
     } else if (displayName === 'Recommend') {
       let payload = result.queryResult.webhookPayload;
       this.showResponse(text, payload);
+      this.showResponseBubble(RecommendCategoriesMessage);
       // Questions that do not have any suggestion bubbles
     } else {
       let payload = result.queryResult.webhookPayload;
@@ -979,32 +1095,32 @@ constructor(props) {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
-    if(this.state.ttsToggle === true) {
-    	Tts.speak(msg.text);
+    if (this.state.ttsToggle === true) {
+      Tts.speak(msg.text);
     } else {
-    	this._startRecognition();
+      this._startRecognition();
     }
   }
-    
- _startRecognition = async () => {
-  	if(this.state.sttToggle === true) {
-    	this.setState({
-      		results: [],
-    	});
-    	try {
-      		await Voice.start('en-US');
-    	} catch (e) {
-      		console.error(e);
-    	}
-  	};
 
-  _stopRecognition = async () => {
-    try {
-      await Voice.stop();
-    } catch (e) {
-      console.log(e);
+  _startRecognition = async () => {
+    if (this.state.sttToggle === true) {
+      this.setState({
+        results: [],
+      });
+      try {
+        await Voice.start('en-US');
+      } catch (e) {
+        console.error(e);
+      }
     }
-	}
+
+    _stopRecognition = async () => {
+      try {
+        await Voice.stop();
+      } catch (e) {
+        console.log(e);
+      }
+    };
   };
 
   _addVoiceMsg = reses => {
@@ -1027,7 +1143,7 @@ constructor(props) {
     );
   };
 
-   renderBubble = props => {
+  renderBubble = props => {
     const {currentUser} = this.state;
     return (
       <Bubble
@@ -1053,36 +1169,36 @@ constructor(props) {
   };
   render() {
     return (
-    <>
-      <View style={styles.container}>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          onQuickReply={quickReply => this.onSend(quickReply)}
-          user={USER}
-          renderBubble={this.renderBubble}
-        />
-        <Button onPress={this._startRecognition} title="Begin Dictation 🎤" />
-    </View>
-    <View style={styles.rowContainer}>
-    	<Text>Text To Speech </Text>
-    	<Switch
-	    	trackColor={{false:'gray',true:'teal'}}
-	    	thumbColor="white"
-	    	ios_backgroundColor="gray"
-	    	onValueChange={(value) => this.setState({ttsToggle: value})}
-	    	value={this.state.ttsToggle}
-	    />
-    	<Text>Speech To Text </Text>
-    	<Switch
-	    	trackColor={{false:'gray',true:'teal'}}
-	    	thumbColor="white"
-	    	ios_backgroundColor="gray"
-	    	onValueChange={(value) => this.setState({sttToggle: value})}
-	    	value={this.state.sttToggle}
-	    />
-    </View>
-    </>
+      <>
+        <View style={styles.container}>
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={messages => this.onSend(messages)}
+            onQuickReply={quickReply => this.onSend(quickReply)}
+            user={USER}
+            renderBubble={this.renderBubble}
+          />
+          <Button onPress={this._startRecognition} title="Begin Dictation 🎤" />
+        </View>
+        <View style={styles.rowContainer}>
+          <Text>Text To Speech </Text>
+          <Switch
+            trackColor={{false: 'gray', true: 'teal'}}
+            thumbColor="white"
+            ios_backgroundColor="gray"
+            onValueChange={value => this.setState({ttsToggle: value})}
+            value={this.state.ttsToggle}
+          />
+          <Text>Speech To Text </Text>
+          <Switch
+            trackColor={{false: 'gray', true: 'teal'}}
+            thumbColor="white"
+            ios_backgroundColor="gray"
+            onValueChange={value => this.setState({sttToggle: value})}
+            value={this.state.sttToggle}
+          />
+        </View>
+      </>
     );
   }
 }
@@ -1093,8 +1209,8 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default ChatbotScreen;

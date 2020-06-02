@@ -33,7 +33,7 @@ class Login extends React.Component {
     return (
 
       // <View style={styles.foundation}>
-      <ImageBackground source={require('../assets/lightwhite2.png')} style={styles.foundation}>
+      <ImageBackground source={require('../assets/lightwhite.png')} style={styles.foundation}>
 
         <View style={styles.header}>
           <Image

@@ -447,7 +447,7 @@ class ChatbotScreen extends React.Component {
     messages: [
       {
         _id: 1,
-        text: 'If you want to ask something else, type in or say the question.',
+        text: 'Feel free to ask me something, or select one of the following options to see what I can do.',
         createdAt: new Date(),
         user: BOT_USER,
       },
@@ -552,14 +552,16 @@ class ChatbotScreen extends React.Component {
     };
 
   onSpeechResultsfn(e) {
-    this._stopRecognition();
+
+
     if (this.state.results.length == 0) {
       console.log('onSpeechResults: ', e);
-
       this.setState({
         results: e.value,
       });
     }
+    console.log('onSpeechResults AFTER IF CHECK');
+    this._stopRecognition();
   }
 
   componentWillmount() {
@@ -574,7 +576,7 @@ class ChatbotScreen extends React.Component {
       dialogflowConfig.project_id,
     );
 
-    Tts.speak("Hi! I am GlookoBuddy. I am here to answer your questions about diabetes. If you want to ask something, type in or say the question");
+    Tts.speak("Hi! I am GlookoBuddy 🤖 \nI am here to answer your questions about diabetes.\n\nFeel free to ask me something, or select one of the following options to see what I can do.");
   }
 
   onSend(messages = []) {
@@ -948,6 +950,8 @@ class ChatbotScreen extends React.Component {
     if(this.state.ttsToggle === true) {
       Tts.speak(msg.text);
     } else {
+      console.log("This is the mf tha'ts giving us a problem. Only when tts is on");
+
       this._startRecognition();
     }
 

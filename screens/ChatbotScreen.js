@@ -536,18 +536,41 @@ class ChatbotScreen extends React.Component {
   constructor(props) {
     super(props);
     Voice.onSpeechResults = this.onSpeechResultsfn.bind(this);
+    Voice.onSpeechStart = this.onSpeechStartfn.bind(this);
+    Voice.onSpeechRecognized = this.onSpeechRecognizedfn.bind(this);
+    Voice.onSpeechError = this.onSpeechErrorfn.bind(this);
+    Voice.onSpeechEnd = this.onSpeechEndfn.bind(this);
+
     Tts.addEventListener('tts-start', event => console.log('start', event));
     Tts.addEventListener('tts-finish', event => this._startRecognition());
     Tts.addEventListener('tts-cancel', event => console.log('cancel', event));
   }
 
+  onSpeechStartfn = e => {
+    console.log('onSpeechStart: ', e);
+  };
+  
+  onSpeechRecognizedfn = e => {
+    console.log('onSpeechRecognized: ', e);
+  };
+  
+  onSpeechEndfn = e => {
+    console.log('onSpeechEnd: ', e);
+  };
+  
+  onSpeechErrorfn = e => {
+    console.log('onSpeechError: ', e);
+    this._addVoiceMsg(this.state.results);
+  };
+  
+  
   onSpeechResultsfn(e) {
+    this._stopRecognition();
     if (this.state.results.length === 0) {
       console.log('onSpeechResults: ', e);
       this.setState({
         results: e.value,
       });
-      this._addVoiceMsg(this.state.results);
     }
   }
 

@@ -564,11 +564,11 @@ class ChatbotScreen extends React.Component {
   
   onSpeechEndfn = e => {
     console.log('onSpeechEnd: ', e);
+    this._addVoiceMsg(this.state.results);
   };
   
   onSpeechErrorfn = e => {
     console.log('onSpeechError: ', e);
-    this._addVoiceMsg(this.state.results);
   };
   
   

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   Button,
+  ImageBackground,
 } from 'react-native';
 
 class Login extends React.Component {
@@ -29,7 +30,7 @@ class Login extends React.Component {
   render() {
     return (
 
-      <View style={styles.foundation}>
+      <ImageBackground source={require('../assets/lightwhite.png')} style={styles.foundation} style={styles.foundation}>
 
         <View style={styles.header}>
           <Image
@@ -72,7 +73,7 @@ class Login extends React.Component {
           <Image style={styles.image} source={require('../assets/Text/welcome.png')} />
         </View>
 
-      </View>
+      </ImageBackground>
     );
   }
 }
@@ -81,7 +82,6 @@ const styles = StyleSheet.create({
   // Styles Container
   loginContainer: {
     flex: 1.5,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

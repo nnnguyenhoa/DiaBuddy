@@ -9,12 +9,13 @@ import {
   TouchableOpacity,
   Text,
   Button,
+  ImageBackground,
 } from 'react-native';
 
 class Splash extends React.Component {
 	render() {
 	    return (
-	    	<View style={styles.foundation}>
+	    	<ImageBackground source={require('../assets/lightwhite.png')} style={styles.foundation}>
 		    	<View style={styles.header}>
 					<Image
 						style={styles.image} source={require('../assets/Logo/gb.png')}
@@ -22,31 +23,33 @@ class Splash extends React.Component {
 					/>
 				</View>
 					
-					<View style={styles.container}>
+					<ImageBackground source={require('../assets/lightblue.png')} style={styles.container}>
                             <Text style={styles.topText}>Choose a User</Text>
 
-               <TouchableOpacity style={styles.userProfile} onPress={() => Firebase.auth().signInWithEmailAndPassword("KaylumPotter1337@gmail.com", "123456").then(() => this.props.navigation.navigate('UserInfo')).catch(error => console.log(error))}>
+                <TouchableOpacity style={styles.userProfile} onPress={() => Firebase.auth().signInWithEmailAndPassword("darrylrigby19@gmail.com", "123456").then(() => this.props.navigation.navigate('UserInfo')).catch(error => console.log(error))}>
+                  <Image
+                      style={styles.profileImage} source={require('../assets/Prof_PH.png')}
+                      resizeMode="contain"
+                  />
+                  <Text style={styles.profileText}> Darryl Rigby</Text>
+                </TouchableOpacity>
+              
+               <TouchableOpacity style={styles.userProfile} onPress={() => Firebase.auth().signInWithEmailAndPassword("vvt96119@zzrgg.com", "Pass123").then(() => this.props.navigation.navigate('UserInfo')).catch(error => console.log(error))}>
                 <Image
-                    style={styles.profileImage} source={require('../assets/uProfPlaceholder.png')}
+                    style={styles.profileImage} source={require('../assets/Prof_PH.png')}
                     resizeMode="contain"
                 />
-                <Text style={styles.profileText}> Kaylum, Potter</Text>
+                <Text style={styles.profileText}> Ryan Wong</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.userProfile} onPress={() => Firebase.auth().signInWithEmailAndPassword("darrylrigby19@gmail.com", "123456").then(() => this.props.navigation.navigate('UserInfo')).catch(error => console.log(error))}>
-                <Image
-                    style={styles.profileImage} source={require('../assets/uProfPlaceholder.png')}
-                    resizeMode="contain"
-                />
-                <Text style={styles.profileText}> Darryl, Rigby</Text>
-              </TouchableOpacity>
+              
 
               <TouchableOpacity style={styles.userProfile} onPress={() => Firebase.auth().signInWithEmailAndPassword("AprilCoates3131@gmail.com", "123456").then(() => this.props.navigation.navigate('UserInfo')).catch(error => console.log(error))}>
                 <Image
-                    style={styles.profileImage} source={require('../assets/uProfPlaceholder.png')}
+                    style={styles.profileImage} source={require('../assets/Prof_PH.png')}
                     resizeMode="contain"
                 />
-                <Text style={styles.profileText}> April, Coates</Text>
+                <Text style={styles.profileText}> April Coates</Text>
               </TouchableOpacity>
 							<Text style={styles.bottomText}>Or make your own!</Text>
 
@@ -56,8 +59,8 @@ class Splash extends React.Component {
                 </TouchableOpacity>
 							</View>
 
-					</View>
-			</View>
+					</ImageBackground>
+			</ImageBackground>
     	);
   	}
 }
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
 
   profileText: {
   	margin: 10,
-  	flex: 1,
+  	flex: 2,
   	fontSize: 30,
   },
 
@@ -146,7 +149,7 @@ const styles = StyleSheet.create({
   userProfile: {
   	flex: 1,
   	flexDirection: 'row',
-  	alignItems: 'stretch',
+    justifyContent: 'flex-start',
   	margin: 10,
   	borderColor: 'black',
   	backgroundColor: 'white',

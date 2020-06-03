@@ -1,15 +1,19 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {Component, SectionList} from 'react';
+import {StyleSheet, Text, View, FlatList} from 'react-native';
 import {Image, TouchableOpacity, ScrollView } from 'react-native';
 import Firebase from '../config/Firebase';
 // Gotten from bootdey.com/react-native-snippet/23/Profile-ui-example
 
 class UserInfo extends Component {
 	state = {
-		currUser: Firebase.auth().currentUser.uid
+		currUser: Firebase.auth().currentUser.uid,
+		BGL: []
 	}
-
-
+    setArray(returnArray){
+                this.setState({
+                       BGL: returnArray
+                });
+    }
   render() {
 
   	Firebase.database().ref('/users/' + this.state.currUser + '/Profile/').once('value', snapshot => {
@@ -20,7 +24,7 @@ class UserInfo extends Component {
             var city = snapshot.child('City').val();
             var state = snapshot.child('State').val();
             var type = snapshot.child('Type_ofDiabetes').val();
-            
+
 
         	this.setState({
               FirstName: firstname,
@@ -32,32 +36,38 @@ class UserInfo extends Component {
               Type_ofDiabetes: type,
             });
         });
-
-
+        //Firebase.database().ref('/users/' + this.state.currUser + '/Analytics/BloodGlucoseLog').once('value', snapshot => {
+        Firebase.database().ref('/users/' + this.state.currUser + '/Analytics/BloodGlucoseLog').once("value").then(function(snapshot) {
+            var returnArray = []
+            snapshot.forEach(function(childSnapshot) {
+                  //var key = childSnapshot.key;
+                  var childData = childSnapshot.val();
+                  console.log("Data from firebase: ",childData)
+                  returnArray.push(childData);
+            });
+            console.log(returnArray);
+            //this.setArray(returnArray);
+        });
 
     return (
     	<View style = {styles.foundation}>
     		<View style = {styles.header}>
     			<Image
 		          style={styles.avatar}
-		          source={require('../assets/profile.png')}
+		          source={require('../assets/Prof_PH.png')}
 		        />
     		</View>
     		
 	    	<View style = {styles.infoList}>
 	    		<ScrollView>
 	    			<Text style={styles.large}>Personal</Text>
-                    <Text>{this.state.FirstName}, {this.state.LastName}</Text>
-                    <Text>{this.state.Age} {this.state.Weight}</Text>
-                    <Text>{this.state.City}, {this.state.State}</Text>
+                    <Text style={styles.body}>{this.state.FirstName}, {this.state.LastName}</Text>
+                    <Text style={styles.body}>Age = {this.state.Age} Weight = {this.state.Weight}</Text>
+                    <Text style={styles.body}>{this.state.City}, {this.state.State}</Text>
 
                     <Text style={styles.large}>Health</Text>
-                    <Text>Type of Diabetes: Type {this.state.Type_ofDiabetes}</Text>
-                    <Text>Medicine being taken</Text>
+                    <Text style={styles.body}>Type of Diabetes: Type {this.state.Type_ofDiabetes}</Text>
 
-                    <Text style={styles.large}>Data on Account</Text>
-                    <Text>GLV readings</Text>
-                    <Text>Notes</Text>
 				</ScrollView>
 	    	</View>
     		
@@ -84,6 +94,10 @@ foundation: {
 	flex: 1,
 	backgroundColor: '#fff',
   },
+body: {
+    //marginTop: 40,
+    alignSelf: 'center',
+},
 header: {
 	flex: 1,
 	backgroundColor: '#0085FF',
@@ -110,6 +124,7 @@ avatar: {
 },
 large: {
 	fontSize: 40,
+	alignSelf: 'center',
 },
 button: {
 	margin: 20,

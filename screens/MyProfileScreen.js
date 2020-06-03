@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, ImageBackground} from 'react-native';
 import {Image, TouchableOpacity} from 'react-native';
 import Firebase from '../config/Firebase';
 // Gotten from bootdey.com/react-native-snippet/23/Profile-ui-example
@@ -35,31 +35,27 @@ class MyProfileScreen extends Component {
     return (
       <ScrollView style={styles.container}>
         {/* Check out styles for info on header, footer, etc. */}
-        <View style={styles.header} />
+        <ImageBackground source={require('../assets/lightblue.png')} style={styles.header} />
         {/* Images go here */}
         <Image
           style={styles.avatar}
-          source={require('../assets/profile.png')}
+          source={require('../assets/Prof_PH.png')}
         />
 
         <View style={styles.body}>
           <View style={styles.bodyContent}>
 
-            <TouchableOpacity style={styles.buttonContainer}>
-              <Text>Edit Information</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.buttonContainer} onPress={() => Firebase.auth().signOut().then(() => this.props.navigation.navigate('Splash')).catch(error => console.log(error))}>
                 <Text>Log Out</Text>
             </TouchableOpacity>
 
             <Text style={styles.heading}>Personal Information</Text>
             <Text style={styles.description}>{this.state.FirstName} {this.state.LastName}</Text>
-            <Text style={styles.description}>{this.state.Age}</Text>
+            <Text style={styles.description}>Age {this.state.Age}</Text>
             <Text style={styles.description}>{this.state.Weight}</Text>
             <View style={styles.buttonSpace} />
             <Text style={styles.heading}>Health</Text>
             <Text style={styles.description}>Diabetes Type {this.state.Type_ofDiabetes}</Text>
-            <Text style={styles.description}>MEDICINE TYPE</Text>
             
 
             <View style={styles.footer}>

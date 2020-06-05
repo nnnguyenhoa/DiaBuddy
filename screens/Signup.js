@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   Button,
+  ImageBackground,
 } from 'react-native';
 
 class Signup extends React.Component {
@@ -85,7 +86,7 @@ class Signup extends React.Component {
 
   render() {
     return (
-      <View style={styles.foundation}>
+      <ImageBackground source={require('../assets/lightwhite.png')} style={styles.foundation}>
         <View style={styles.header}>
           <Image
             style={styles.image}
@@ -170,7 +171,7 @@ class Signup extends React.Component {
             <Text style={styles.buttonText}>Take me back!</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 } //

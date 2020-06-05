@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, Switch} from 'react-native';
+import {Text, View, Switch, ImageBackground} from 'react-native';
 
 import {StyleSheet, Button} from 'react-native';
 import Voice from 'react-native-voice';
@@ -480,16 +480,11 @@ class ChatbotScreen extends React.Component {
     countData: [],
     currUser: Firebase.auth().currentUser.uid,
     messages: [
-      {
-        _id: 1,
-        text: 'If you want to ask something else, type in or say the question.',
-        createdAt: new Date(),
-        user: BOT_USER,
-      },
+
       {
         _id: 2,
         text:
-          'Hi! I am GlookoBuddy 🤖 \nI am here to answer your questions about diabetes.',
+          'Hi! I am DiaBuddy 🤖 \nI am here to answer your questions about diabetes. \n\nFeel free to ask me something, or select one of the following options to see what I can do.',
         createdAt: new Date(),
         user: BOT_USER,
         quickReplies: {
@@ -1195,7 +1190,7 @@ class ChatbotScreen extends React.Component {
   render() {
     return (
       <>
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/lightwhite.png')} style={styles.container}>
           <GiftedChat
             messages={this.state.messages}
             onSend={messages => this.onSend(messages)}
@@ -1204,7 +1199,7 @@ class ChatbotScreen extends React.Component {
             renderBubble={this.renderBubble}
           />
           <Button onPress={this._startRecognition} title="Begin Dictation 🎤" />
-        </View>
+        </ImageBackground>
         <View style={styles.rowContainer}>
           <Text>Text To Speech </Text>
           <Switch

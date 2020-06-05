@@ -8,6 +8,7 @@ import ChatbotScreen from './screens/ChatbotScreen';
 import Splash from './screens/Splash';
 import UserInfo from './screens/UserInfo';
 import ArticlesContent from './screens/ArticlesContent';
+import Disclaimer from './screens/Disclaimer'
 //import Icon from 'react-native-vector-icons/FontAwesome';
 
 const TabNavigator = createBottomTabNavigator(
@@ -62,9 +63,12 @@ const SwitchNavigator = createSwitchNavigator(
     UserInfo: {
       screen: UserInfo,
     },
+    Disclaimer: {
+      screen: Disclaimer,
+    },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'Disclaimer',
   },
 );
 

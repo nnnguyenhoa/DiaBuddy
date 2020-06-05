@@ -70,8 +70,14 @@ class Login extends React.Component {
 
         <View style={styles.footer}>
 
-          <Image style={styles.image} source={require('../assets/Text/welcome.png')} />
+          <Image style={styles.image2} source={require('../assets/Text/welcome.png')} />
+        
         </View>
+
+        <View style={styles.footerText}>
+        <Text>This project is sponsored by Glooko®</Text></View>
+                  <View style={styles.spacer}/>
+
 
       </ImageBackground>
     );
@@ -95,6 +101,9 @@ const styles = StyleSheet.create({
 
   footer: {
     flex: 1,
+  },
+  footerText: {
+    flex: .1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -132,6 +141,10 @@ const styles = StyleSheet.create({
     width: 200,
   },
 
+  spacer: {
+    flex:.1,
+  },
+
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -144,9 +157,17 @@ const styles = StyleSheet.create({
 
   image: {
     flex:1,
-    aspectRatio: 1.4,
-    resizeMode:'cover',
+    
+    resizeMode:'contain',
   },
+
+  image2: {
+    flex: .6,
+    height: null,
+    resizeMode: 'contain',
+    width: null,
+  },
+
 });
 
 export default Login;

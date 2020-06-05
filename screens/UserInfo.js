@@ -74,7 +74,7 @@ class UserInfo extends Component {
     		<View style = {styles.footer}>
     			<View style= {styles.button}>
     				<TouchableOpacity onPress={() => this.props.navigation.navigate('Splash')}>
-								  <Text style={styles.large}>back</Text>
+								  <Text style={styles.large}>Back</Text>
                 	</TouchableOpacity>
     			</View>
     			<View style= {styles.button}>
@@ -112,6 +112,8 @@ footer: {
 	flex: 1,
 	backgroundColor: '#0085FF',
 	flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
 },
 avatar: {
 	width: 100,

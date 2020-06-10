@@ -706,7 +706,7 @@ class ChatbotScreen extends React.Component {
       value: BGamount,
       date: currDate,
     });
-    if (this.state.BgHigh === 'Null') {
+    if (this.state.BgHigh == 'Null') {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({
@@ -718,7 +718,7 @@ class ChatbotScreen extends React.Component {
         BgHighdate: currDate,
       });
     }
-    if (this.state.BgLow === 'Null') {
+    if (this.state.BgLow == 'Null') {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({
@@ -730,7 +730,7 @@ class ChatbotScreen extends React.Component {
         BgLowdate: currDate,
       });
     }
-    if (this.state.BgHigh < BGamount) {
+    if (Number(this.state.BgHigh) < BGamount) {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({
@@ -741,7 +741,7 @@ class ChatbotScreen extends React.Component {
         BgHigh: BGamount,
         BgHighdate: currDate,
       });
-    } else if (this.state.BgLow > BGamount) {
+    } else if (Number(this.state.BgLow) > BGamount) {
       Firebase.database()
         .ref('/users/' + this.state.currUser + '/Analytics/')
         .update({

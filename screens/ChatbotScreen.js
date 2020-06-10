@@ -14,7 +14,7 @@ const BOT_USER = {
   _id: 2,
   name: 'Glooko Buddy',
   avatar:
-    'https://media.glassdoor.com/sql/1320444/glooko-squarelogo-1467383473350.png',
+    'https://i.imgur.com/VlQAyB4.png',
 };
 
 const USER = {
@@ -482,7 +482,7 @@ class ChatbotScreen extends React.Component {
     messages: [
 
       {
-        _id: 2,
+        _id: 1,
         text:
           'Hi! I am DiaBuddy 🤖 \nI am here to answer your questions about diabetes. \n\nFeel free to ask me something, or select one of the following options to see what I can do.',
         createdAt: new Date(),
@@ -586,6 +586,7 @@ class ChatbotScreen extends React.Component {
       Dialogflow_V2.LANG_ENGLISH_US,
       dialogflowConfig.project_id,
     );
+    Tts.speak("Hi! I am DiaBuddy. I am here to answer your questions about diabetes. Feel free to ask me something, or select one of the following options to see what I can do.");
   }
 
   getRandom(arr, n) {
@@ -927,7 +928,6 @@ class ChatbotScreen extends React.Component {
       this.UpdateGen();
     } else if (tag === 'SLFA') {
       this.UpdateSgr();
-      this.UpdateAid();
     } else if (tag === 'LTSL') {
       this.UpdateTips();
       this.UpdateSgr();
